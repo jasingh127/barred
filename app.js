@@ -8,6 +8,7 @@ var routes = require('./routes');
 path = require('path'); // global path variable
 sqlite = require('sqlite3').verbose(); // global sqlite variable
 fs = require('fs'); // global fs variable
+mssql = require('mssql'); // global mssql variable
 
 var app = express();
 app.set('port', process.env.PORT || 3001);
@@ -19,22 +20,30 @@ var cors = require('cors');
 app.use(cors());
 
 /***************************************************************************
-// Database
+// Connection to the local Sqlite Database
 ***************************************************************************/
-function createDatabaseConnection() {
-  // Create sqlite db
-  db = new sqlite.Database(path.join(__dirname, 'data/barred_table.db')); // global db variable
-}
+db = new sqlite.Database(path.join(__dirname, 'data/barred_table.db')); // global db variable
 
-// Initialize connection to database
-createDatabaseConnection();
+/***************************************************************************
+// Remote iTrak Sql server 2008 Database Configuration
+***************************************************************************/
+iTrak_config = {
+    user: 'sa',
+    password: 'DV_T3lab',
+    server: 'localhost', // You can use 'localhost\\instance' to connect to named instance
+    database: 'dbo',
+ 
+    // options: {
+    //     encrypt: true // Use this if you're on Windows Azure
+    // }
+}
 
 /***************************************************************************
 // REST API
 ***************************************************************************/
 app.get('/', routes.index);
 app.post('/fetchCustomer', routes.fetchCustomer);
-app.get('/fetchITrackData', routes.fetchITrackData);  // Just for testing direct data reading, remove later
+app.get('/fetchITrakData', routes.fetchITrakData);  // Just for testing direct data reading, remove later
 
 /***************************************************************************
 // Periodic DB Update Function

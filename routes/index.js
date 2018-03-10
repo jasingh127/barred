@@ -44,9 +44,14 @@ exports.fetchCustomer = function(req, res) {
   }
 }
 
-exports.fetchITrackData = function(res) {
-  // To be added
+exports.fetchITrakData = function(req, res) {
   // Connect to ITrack database and read the right table
+  mssql.connect(iTrak_config, err => {
+    new mssql.Request().query('select FirstName, LastName, DateOfBirth, Category from SubjectProfile', (err, result) => {
+      console.log(result)
+      res.send(result)
+    })
+  })
 }
 
 /************************************************************************
