@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+    <title> Check Barred Customers </title>
+    <link rel="stylesheet" href="../css/third_party/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/third_party/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="../css/third_party/jquery.dataTables-1.10.0.css">
+    <link rel="stylesheet" href="../css/third_party/scroller.dataTables.min.css">
+    <link rel="stylesheet" href="../css/third_party/jquery-ui.css">
+    
+    <link rel="stylesheet" href="../css/util.css">
+
+    <script type="text/javascript" src="../js/third_party/jquery-2.2.0.min.js"></script>
+    <script type="text/javascript" src="../js/third_party/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../js/third_party/d3.v3.min.js"></script>
+    <script type="text/javascript" src="../js/third_party/d3.tip.v0.6.3.js"></script>
+    <script type="text/javascript" src="../js/third_party/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="../js/third_party/dataTables.scroller.min.js"></script>
+    <script type="text/javascript" src="../js/third_party/d3-jetpack.js"></script>
+    <script type="text/javascript" src="../js/third_party/gunzip.min.js"></script>
+    <script type="text/javascript" src="../js/third_party/underscore-min.js"></script>
+    <script type="text/javascript" src="../js/third_party/jquery-ui.js"></script>
+
+
+    <script type="text/javascript" src="../js/miscutil.js"></script>
+    <script type="text/javascript" src="../js/dbutil.js"></script>
+
+    <script>
+      var customer_query_callback = function(customer_data) {
+        // Create table if doesn't exist, otherwise update table data
+        if ( ! $.fn.DataTable.isDataTable('#matching_customers')) {
+          $("#matching_customers").DataTable({
+            paging:   false,
+            info:     false,
+            searching:   false,
+            data: customer_data,
+            columns: [
+                {title: "Status" },
+                { title: "First Name" },
+                { title: "Last Name"  },
+                { title: "D.O.B." },
+                { title: "Subject ID" },
+                { title: "Age"}
+            ],          
+            dom: 'Bfrtip'
+          });
+        }
+        else {
+          var datatable = $('#matching_customers').dataTable().api();
+          datatable.clear();
+          datatable.rows.add(customer_data);
+          datatable.draw();
+        }
+      }
+    </script>
+
+</head>
+
+<style>
+input[type=text], select {
+    width: 30%;
+    height: 50px;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+</style>
+
+<body>
+  <center> 
+    <h3> Search customers by first and last name </h3>
+
+    <div>
+      <form id="customer_query_form">
+        First Name: <input type="text" id="first_name" name="first_name" placeholder='John'> <br>
+        Last Name: <input type="text" id="last_name" name="last_name" placeholder='Doe'> <br>
+        <input type="submit" value="Submit">
+      </form>  
+    </div>
+  </center>
+
+  <div class="table">
+      <div id="matching_customers_div" class="cell">
+        <center> <h4> Matching Customers </h4> </center>
+        <center> 
+        <table id="matching_customers" class="cell-border display" width="100%">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+        </table> 
+        </center>
+      </div>    
+  </div>
+    
+    
+  <script>
+    $(function() {
+      // Setup function to capture form submit
+      function processForm(e) {
+        if (e.preventDefault)
+          e.preventDefault();
+
+        try {
+          var name_query = {"first_name": $('#first_name').val(), "last_name": $('#last_name').val()}
+          DbUtil.fetchCustomer(name_query, customer_query_callback)
+        } 
+        catch(e) {
+          alert(e);
+          return false;
+        }
+      }
+
+      var form = document.getElementById('customer_query_form');
+      if (form.attachEvent) {
+          form.attachEvent("submit", processForm);
+      } 
+      else {
+        form.addEventListener("submit", processForm);
+      }
+    }); 
+
+  </script>
+</body>
