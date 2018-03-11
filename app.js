@@ -30,12 +30,12 @@ db = new sqlite.Database(path.join(__dirname, 'data/barred_table.db')); // globa
 iTrak_config = {
     user: 'sa',
     password: 'DV_T3lab',
-    server: 'localhost', // You can use 'localhost\\instance' to connect to named instance
-    database: 'dbo',
- 
-    // options: {
-    //     encrypt: true // Use this if you're on Windows Azure
-    // }
+    server: 'WIN-I5VRPHUHFTF', // You can use 'localhost\\instance' to connect to named instance
+    database: 'iXData',
+    port: 1433,
+    options: {
+        encrypt: false
+    }
 }
 
 /***************************************************************************

@@ -36,10 +36,12 @@
             data: customer_data,
             columns: [
                 {title: "Status" },
+                {title: "SubjectId" },
                 { title: "First Name" },
+                { title: "Middle Name" },
                 { title: "Last Name"  },
+                {title: "Gender" },
                 { title: "D.O.B." },
-                { title: "Subject ID" },
                 { title: "Age"}
             ],          
             dom: 'Bfrtip'
@@ -89,6 +91,8 @@ input[type=text], select {
         <table id="matching_customers" class="cell-border display" width="100%">
             <thead>
                 <tr>
+                    <th></th>
+                    <th></th>
                     <th></th>
                     <th></th>
                     <th></th>

@@ -13,14 +13,17 @@ var DbUtil = {
         var matching_entries = []
         for (var i = 0; i < data["rows"].length; i++) {
           var entry = data["rows"][i]
-          matching_entries.push([entry["status"], 
+          matching_entries.push([
+            entry["status"], 
+            entry["subject_id"],
             entry["first_name"], 
+            entry["middle_name"],
             entry["last_name"], 
-            entry["dob"], 
-            entry["subject_id"], 
+            entry["gender"],
+            entry["dob"],  
             entry["age"]])
         }
-          console.log(matching_entries)
+          // console.log(matching_entries)
 
         callback(matching_entries);
       });
