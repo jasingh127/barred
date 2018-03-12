@@ -44,11 +44,6 @@ exports.fetchCustomer = function(req, res) {
   }
 }
 
-exports.fetchITrakData = function(req, res) {
-  // Connect to ITrack database and read the right table
-  res.send("Refactor and copy code for this")
-}
-
 /************************************************************************
  Some utility functions + Global variables
  ************************************************************************/
@@ -59,6 +54,17 @@ exports.random_int = function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 } 
 
+exports.format_date = function(date) {
+  var d = new Date(date),
+    month = '' + (d.getMonth() + 1),
+    day = '' + d.getDate(),
+    year = d.getFullYear();
+
+  if (month.length < 2) month = '0' + month;
+  if (day.length < 2) day = '0' + day;
+
+  return [year, month, day].join('-');
+}
 
 exports.insert_rows_into_database = function(rows) {
     db.serialize( function() {
@@ -69,26 +75,10 @@ exports.insert_rows_into_database = function(rows) {
                                                        middle_name TEXT, \
                                                        last_name TEXT, \
                                                        gender TEXT, \
-                                                       dob TEXT, \
-                                                       age INTEGER)";
+                                                       dob TEXT)";
     db.run(query)
 
-    // // Initially let's populate with some fake data
-    // // Later change this with streaming data from iTrak
-
-    // var fake_profiles = [["Barred", 1, "Alok", "Mehta", "10/10/1980", 31], 
-    //                      ["Default", 2, "Alok", "Gupta", "10/10/1980", 32],
-    //                      ["Self-Barred", 5, "Alok", "Jain", "10/10/1980", 33],
-    //                      ["Banned", 6, "Amit", "Kumar", "10/10/1980", 38],
-    //                      ["Default", 9, "Amit", "Mehta", "10/10/1980", 48]]
-
-    // var stmt = db.prepare("REPLACE INTO PROFILES VALUES (?, ?, ?, ?, ?, ?)");
-    // for (var i = 0; i < fake_profiles.length; i++) {
-    //   var p = fake_profiles[i]
-    //   stmt.run(p[0], p[1], p[2], p[3], p[4], p[5]);
-    // }
-
-    var stmt = db.prepare("REPLACE INTO PROFILES VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
+    var stmt = db.prepare("REPLACE INTO PROFILES VALUES (?, ?, ?, ?, ?, ?, ?)")
     for (var i = 0; i < rows.length; i++) {
       var status = rows[i]["Category"]
       var subject_id = rows[i]["SubjectId"]
@@ -96,12 +86,30 @@ exports.insert_rows_into_database = function(rows) {
       var middle_name = rows[i]["MiddleName"]
       var last_name = rows[i]["LastName"]
       var gender = rows[i]["Gender"]
-      var dob = rows[i]["DateOfBirth"]
-      var age = rows[i]["AgeRangeLower"]
+      var dob = exports.format_date(rows[i]["DateOfBirth"])
 
-      stmt.run(status, subject_id, first_name, middle_name, last_name, gender, dob, age)
+      stmt.run(status, subject_id, first_name, middle_name, last_name, gender, dob)
     }
   })
+}
+
+exports.fetch_iTrak_data = function(callback) {
+  console.log("Fetching iTrak data")
+
+  new mssql.ConnectionPool(iTrak_config).connect().then(pool => {
+    return pool.request().query("select Category, SubjectId, FirstName, MiddleName, LastName, Gender, DateOfBirth from dbo.SubjectProfile")
+  }).then(result => {
+    let rows = result.recordset
+    console.log('Fetched ' + rows.length + ' rows of data from iTrak')
+
+    callback(rows)
+
+    mssql.close();
+  }).catch(err => {
+    console.log(err)
+    mssql.close();
+  });
+
 }
 
 /************************************************************************
@@ -109,34 +117,5 @@ Function to sync our sqlite database with the iTrak database.
 ************************************************************************/
 exports.sync_database = function() {
   console.log("Syncing local db with iTrak db");
-
-  mssql.connect(iTrak_config, err => {
-    // ... error checks
-    var rows = []
- 
-    const request = new mssql.Request()
-    request.stream = true // You can set streaming differently for each request
-    request.query('select Category, SubjectId, FirstName, MiddleName, LastName, Gender, DateOfBirth, AgeRangeLower from dbo.SubjectProfile')
- 
-    request.on('row', row => {
-        rows.push(row)
-    })
- 
-    request.on('error', err => {
-        console.log(err)
-    })
- 
-    request.on('done', result => {
-        // Always emitted as the last one
-        console.log('Fetched ' + rows.length + ' rows of data from iTrak')
-
-        // Now insert this data into our local sqlite database
-        exports.insert_rows_into_database(rows)
-    })
-  })
- 
-  mssql.on('error', err => {
-    console.log(err)
-  })
-
+  exports.fetch_iTrak_data(exports.insert_rows_into_database)
 }

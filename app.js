@@ -22,7 +22,8 @@ app.use(cors());
 /***************************************************************************
 // Connection to the local Sqlite Database
 ***************************************************************************/
-db = new sqlite.Database(path.join(__dirname, 'data/barred_table.db')); // global db variable
+// db = new sqlite.Database(path.join(__dirname, 'data/barred_table.db')); // global db variable
+db = new sqlite.Database(':memory:'); // global db variable
 
 /***************************************************************************
 // Remote iTrak Sql server 2008 Database Configuration
@@ -30,7 +31,7 @@ db = new sqlite.Database(path.join(__dirname, 'data/barred_table.db')); // globa
 iTrak_config = {
     user: 'sa',
     password: 'DV_T3lab',
-    server: 'WIN-I5VRPHUHFTF', // You can use 'localhost\\instance' to connect to named instance
+    server: 'WIN-I5VRPHUHFTF',
     database: 'iXData',
     port: 1433,
     options: {
@@ -43,7 +44,6 @@ iTrak_config = {
 ***************************************************************************/
 app.get('/', routes.index);
 app.post('/fetchCustomer', routes.fetchCustomer);
-app.get('/fetchITrakData', routes.fetchITrakData);  // Just for testing direct data reading, remove later
 
 /***************************************************************************
 // Periodic DB Update Function
@@ -53,7 +53,7 @@ routes.sync_database(); // run once immediately, then run periodically
 setInterval(function () {
   routes.sync_database();
 
-}, 10 * routes.MILLISEC_PER_MIN); // runs every 10 minutes
+}, 20 * routes.MILLISEC_PER_MIN); // runs every 20 minutes
 
 app.listen(app.get('port'), function(){
   console.log("Casino barred customers app listening on port " + app.get('port'));

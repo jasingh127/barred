@@ -20,8 +20,7 @@ var DbUtil = {
             entry["middle_name"],
             entry["last_name"], 
             entry["gender"],
-            entry["dob"],  
-            entry["age"]])
+            entry["dob"]])
         }
           // console.log(matching_entries)
 

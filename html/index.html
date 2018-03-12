@@ -41,8 +41,7 @@
                 { title: "Middle Name" },
                 { title: "Last Name"  },
                 {title: "Gender" },
-                { title: "D.O.B." },
-                { title: "Age"}
+                { title: "D.O.B." }
             ],          
             dom: 'Bfrtip'
           });
@@ -77,8 +76,8 @@ input[type=text], select {
 
     <div>
       <form id="customer_query_form">
-        First Name: <input type="text" id="first_name" name="first_name" placeholder='John'> <br>
-        Last Name: <input type="text" id="last_name" name="last_name" placeholder='Doe'> <br>
+        First Name: <input type="text" id="first_name" name="first_name"> <br>
+        Last Name: <input type="text" id="last_name" name="last_name"> <br>
         <input type="submit" value="Submit">
       </form>  
     </div>
@@ -91,7 +90,6 @@ input[type=text], select {
         <table id="matching_customers" class="cell-border display" width="100%">
             <thead>
                 <tr>
-                    <th></th>
                     <th></th>
                     <th></th>
                     <th></th>
