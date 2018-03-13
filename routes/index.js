@@ -60,6 +60,10 @@ exports.format_date = function(date) {
     day = '' + d.getDate(),
     year = d.getFullYear();
 
+    if (year == 1899) {
+      return 'Unknown'
+    }
+
   if (month.length < 2) month = '0' + month;
   if (day.length < 2) day = '0' + day;
 
