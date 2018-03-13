@@ -19,7 +19,7 @@ exports.fetchCustomer = function(req, res) {
   
   // Query database
   if (!first_name) {
-    db.all("SELECT * FROM PROFILES WHERE UPPER(last_name) = UPPER(?)", 
+    db.all("SELECT * FROM PROFILES WHERE UPPER(REPLACE(last_name, ' ', '')) = UPPER(REPLACE(?, ' ', ''))", 
         last_name,
         function (err, rows) {
           res.json({"rows": rows})
@@ -27,7 +27,7 @@ exports.fetchCustomer = function(req, res) {
       );
   }
   else if (!last_name) {
-    db.all("SELECT * FROM PROFILES WHERE UPPER(first_name) = UPPER(?)", 
+    db.all("SELECT * FROM PROFILES WHERE UPPER(REPLACE(first_name, ' ', '')) = UPPER(REPLACE(?, ' ', ''))", 
         first_name,
         function (err, rows) {
           res.json({"rows": rows})
@@ -35,7 +35,9 @@ exports.fetchCustomer = function(req, res) {
       );
   }
   else {
-    db.all("SELECT * FROM PROFILES WHERE UPPER(first_name) = UPPER(?) AND UPPER(last_name) = UPPER(?)", 
+    db.all("SELECT * FROM PROFILES WHERE \
+      UPPER(REPLACE(first_name, ' ', '')) = UPPER(REPLACE(?, ' ', '')) \
+      AND UPPER(REPLACE(last_name, ' ', '')) = UPPER(REPLACE(?, ' ', ''))", 
       first_name, last_name,
       function (err, rows) {
         res.json({"rows": rows})
@@ -104,9 +106,9 @@ exports.fetch_iTrak_data = function(callback) {
     return pool.request().query(
       "select Category, SubjectId, FirstName, MiddleName, LastName, Gender, DateOfBirth \
       from dbo.SubjectProfile where Category in \
-      ('Banned', 'Banned Guest', 'Barred', 'Warned', \
-      'Self-Barred', 'Re-Barred', 'Barred Patron', 'BOLO', \
-      'Reinstated', 'Re-Reinstated', 'Watch')")
+      ('Banned', 'Banned Guest', 'Barred', 'Barred Patron', 'BOLO', \
+      'Re-Barred', 'Reinstated', 'Re-Reinstated', \
+      'Self-Barred', 'Warning', Warned', 'Watch')")
   }).then(result => {
     let rows = result.recordset
     console.log('Fetched ' + rows.length + ' rows of data from iTrak')
