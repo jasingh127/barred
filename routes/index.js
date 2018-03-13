@@ -97,7 +97,12 @@ exports.fetch_iTrak_data = function(callback) {
   console.log("Fetching iTrak data")
 
   new mssql.ConnectionPool(iTrak_config).connect().then(pool => {
-    return pool.request().query("select Category, SubjectId, FirstName, MiddleName, LastName, Gender, DateOfBirth from dbo.SubjectProfile")
+    return pool.request().query(
+      "select Category, SubjectId, FirstName, MiddleName, LastName, Gender, DateOfBirth \
+      from dbo.SubjectProfile where Category in \
+      ('Banned', 'Banned Guest', 'Barred', 'Warned', \
+      'Self-Barred', 'Re-Barred', 'Barred Patron', 'BOLO', \
+      'Reinstated', 'Re-Reinstated', 'Watch')")
   }).then(result => {
     let rows = result.recordset
     console.log('Fetched ' + rows.length + ' rows of data from iTrak')
@@ -106,6 +111,7 @@ exports.fetch_iTrak_data = function(callback) {
 
     mssql.close();
   }).catch(err => {
+    console.log("Failed to fetch records from iTrak..")
     console.log(err)
     mssql.close();
   });
