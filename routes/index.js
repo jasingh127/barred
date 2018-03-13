@@ -108,7 +108,7 @@ exports.fetch_iTrak_data = function(callback) {
       from dbo.SubjectProfile where Category in \
       ('Banned', 'Banned Guest', 'Barred', 'Barred Patron', 'BOLO', \
       'Re-Barred', 'Reinstated', 'Re-Reinstated', \
-      'Self-Barred', 'Warning', Warned', 'Watch')")
+      'Self-Barred', 'Warning', 'Warned', 'Watch')")
   }).then(result => {
     let rows = result.recordset
     console.log('Fetched ' + rows.length + ' rows of data from iTrak')
