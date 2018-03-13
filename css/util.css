@@ -1,3 +1,8 @@
+body {
+  background-image: url("../css/images/san_lytton_large.jpg");
+  background-size: cover;
+}
+
 #scrollable {
     overflow: auto;
 }
