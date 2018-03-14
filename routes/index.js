@@ -68,7 +68,7 @@ exports.random_int = function getRandomInt(min, max) {
 exports.format_date = function(date) {
   var d = new Date(date),
     month = '' + (d.getMonth() + 1),
-    day = '' + d.getDate(),
+    day = '' + (d.getDate() + 1),
     year = d.getFullYear();
 
     if (year == 1899) {
