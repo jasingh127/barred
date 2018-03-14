@@ -22,6 +22,9 @@ exports.fetchCustomer = function(req, res) {
     db.all("SELECT * FROM PROFILES WHERE UPPER(REPLACE(last_name, ' ', '')) = UPPER(REPLACE(?, ' ', ''))", 
         last_name,
         function (err, rows) {
+          if (err) {
+            console.log(errr)
+          }
           res.json({"rows": rows})
         }
       );
@@ -30,6 +33,9 @@ exports.fetchCustomer = function(req, res) {
     db.all("SELECT * FROM PROFILES WHERE UPPER(REPLACE(first_name, ' ', '')) = UPPER(REPLACE(?, ' ', ''))", 
         first_name,
         function (err, rows) {
+          if (err) {
+            console.log(err)
+          }
           res.json({"rows": rows})
         }
       );
@@ -40,6 +46,9 @@ exports.fetchCustomer = function(req, res) {
       AND UPPER(REPLACE(last_name, ' ', '')) = UPPER(REPLACE(?, ' ', ''))", 
       first_name, last_name,
       function (err, rows) {
+        if (err) {
+          console.log(err)
+        }
         res.json({"rows": rows})
       }
     );
@@ -112,13 +121,13 @@ exports.fetch_iTrak_data = function(callback) {
   }).then(result => {
     let rows = result.recordset
     console.log('Fetched ' + rows.length + ' rows of data from iTrak')
-
     callback(rows)
-
     mssql.close();
   }).catch(err => {
     console.log("Failed to fetch records from iTrak..")
     console.log(err)
+    let rows = []
+    callback(rows)
     mssql.close();
   });
 

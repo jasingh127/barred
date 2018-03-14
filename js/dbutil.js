@@ -8,7 +8,7 @@ var DbUtil = {
         if (data === undefined) {
           console.log("No Customer Data");
         }
-        // console.log(data)
+        console.log(data)
 
         var matching_entries = []
         for (var i = 0; i < data["rows"].length; i++) {

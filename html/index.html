@@ -57,79 +57,58 @@
 
 </head>
 
-<style>
-input[type=text], select {
-    width: 30%;
-    height: 50px;
-    padding: 12px 20px;
-    margin: 8px 0;
-    display: inline-block;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
-</style>
+<div class="user">
+    <header class="user__header">
+        <img src="../css/images/san_lytton_icon.jpg" alt="" />
+    </header>
+    
+    <form class="form" id="customer_query_form">
+        <div class="form__group">
+            <input type="text" placeholder="First Name" class="form__input" id="first_name" />
+        </div>
+        
+        <div class="form__group">
+            <input type="text" placeholder="Last Name" class="form__input" id="last_name" />
+        </div>
+                
+        <button class="btn" type="button"> <h4> Lookup Barred Guests </h4> </button>
+    </form>
+</div>
 
-<body class="body">
-  <center> 
-    <h1> San Pablo Lytton Casino - Barred Guests Lookup </h1>
-
-    <div>
-      <form id="customer_query_form">
-        First Name: <input type="text" id="first_name" name="first_name"> <br>
-        Last Name: <input type="text" id="last_name" name="last_name"> <br>
-        <input type="submit" value="Lookup">
-      </form>  
-    </div>
-  </center>
-
-  <div class="table">
-      <div id="matching_customers_div" class="cell">
-        <center> <h2> Matching Guests </h2> </center>
-        <center> 
-        <table id="matching_customers" class="cell-border display" width="100%">
-            <thead>
-                <tr>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                </tr>
-            </thead>
-        </table> 
-        </center>
-      </div>    
-  </div>
+<div class="table">
+    <div id="matching_customers_div" class="cell">
+      <center> 
+      <table id="matching_customers" class="cell-border display" width="100%">
+          <thead>
+              <tr>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+              </tr>
+          </thead>
+      </table> 
+      </center>
+    </div>    
+</div>
     
     
-  <script>
-    $(function() {
-      // Setup function to capture form submit
-      function processForm(e) {
-        if (e.preventDefault)
-          e.preventDefault();
+<script>
 
-        try {
-          var name_query = {"first_name": $('#first_name').val(), "last_name": $('#last_name').val()}
-          DbUtil.fetchCustomer(name_query, customer_query_callback)
-        } 
-        catch(e) {
-          alert(e);
-          return false;
-        }
-      }
-
-      var form = document.getElementById('customer_query_form');
-      if (form.attachEvent) {
-          form.attachEvent("submit", processForm);
+  $('.btn').on('click', function () {
+      $('.form').addClass('form--no');
+      
+      try {
+        var name_query = {"first_name": $('#first_name').val(), "last_name": $('#last_name').val()}
+        DbUtil.fetchCustomer(name_query, customer_query_callback)
       } 
-      else {
-        form.addEventListener("submit", processForm);
+      catch(e) {
+        alert(e);
+        return false;
       }
-    }); 
+  });
 
-  </script>
-</body>
+</script>
