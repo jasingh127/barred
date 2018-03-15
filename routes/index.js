@@ -115,17 +115,32 @@ exports.fetch_iTrak_data = function(callback) {
     return pool.request().query(
       "select Category, SubjectId, FirstName, MiddleName, LastName, Gender, DateOfBirth \
       from dbo.SubjectProfile where Category in \
-      ('Banned', 'Banned Guest', 'Barred', 'Barred Patron', 'BOLO', \
+      ('Banned', 'Banned Guest', 'Barred', 'Barred Patron', 'Barred Permanently', BOLO', 'Guest', \
       'Re-Barred', 'Reinstated', 'Re-Reinstated', \
       'Self-Barred', 'Warning', 'Warned', 'Watch')")
   }).then(result => {
     let rows = result.recordset
-    console.log('Fetched ' + rows.length + ' rows of data from iTrak')
+    // console.log('Fetched ' + rows.length + ' rows of data from iTrak')
+    logger.info('Fetched ' + rows.length + ' rows of data from iTrak')
+    
+    // Calculate and log counts of different categories
+    var counts = {'Banned': 0, 'Banned Guest': 0, 'Barred': 0, 'Barred Patron': 0, \
+                  'Barred Permanently': 0, 'BOLO': 0, 'Guest': 0, 'Re-Barred': 0, \
+                  'Reinstated': 0, 'Re-Reinstated': 0, 'Self-Barred': 0, 'Warning': 0, \
+                  'Warned': 0, 'Watch': 0}
+    for (var i = 0; i < rows.length; i++) {
+      counts[rows[i]['Category']] += 1
+    }
+    console.log(counts)
+    logger.info(counts)
+    
     callback(rows)
     mssql.close();
   }).catch(err => {
-    console.log("Failed to fetch records from iTrak..")
-    console.log(err)
+    // console.log("Failed to fetch records from iTrak..")
+    // console.log(err)
+    logger.warn("Failed to fetch records from iTrak. Error message below:")
+    logger.warn(err)
     let rows = []
     callback(rows)
     mssql.close();
@@ -137,6 +152,7 @@ exports.fetch_iTrak_data = function(callback) {
 Function to sync our sqlite database with the iTrak database.
 ************************************************************************/
 exports.sync_database = function() {
-  console.log("Syncing local db with iTrak db");
+  // console.log("Syncing local db with iTrak db");
+  logger.info("Syncing local db with iTrak db")
   exports.fetch_iTrak_data(exports.insert_rows_into_database)
 }

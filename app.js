@@ -9,6 +9,8 @@ path = require('path'); // global path variable
 sqlite = require('sqlite3').verbose(); // global sqlite variable
 fs = require('fs'); // global fs variable
 mssql = require('mssql'); // global mssql variable
+var winston = require('winston')
+require('winston-daily-rotate-file');
 
 var app = express();
 app.set('port', process.env.PORT || 3001);
@@ -18,6 +20,32 @@ app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 app.use(express.static(__dirname));
 var cors = require('cors');
 app.use(cors());
+
+/***************************************************************************
+// Logger
+***************************************************************************/
+var logger_directory = path.join(__dirname, 'logs/');
+if (!fs.existsSync(logger_directory)){
+    fs.mkdirSync(logger_directory);
+}
+
+const tsFormat = () => (new Date()).toLocaleTimeString();
+var transport = new winston.transports.DailyRotateFile({
+  localTime: true,
+  json: false,
+  timestamp: tsFormat,
+  dirname: logger_directory,
+  filename: 'log.txt',
+  datePattern: 'yyyy-MM-dd_',
+  maxFiles: 5,
+  prepend: true
+});
+
+logger = new (winston.Logger)({ // global logger variable
+  transports: [
+    transport
+  ]
+});
 
 /***************************************************************************
 // Connection to the local Sqlite Database
