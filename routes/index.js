@@ -8,6 +8,35 @@ exports.index = function(req, res){
   res.sendFile('index.html', {root: __dirname + '/../html'});
 };
 
+exports.logs = function(req, res){
+  res.sendFile('logs.html', {root: __dirname + '/../html'});
+};
+
+/************************************************************************
+ Rest API for viewing logs.
+ ************************************************************************/
+
+// Fetch log data for a single day
+exports.fetchLogs = function(req, res){
+  // console.log(req.body)
+  var year = Number(req.body.year)
+  var month = Number(req.body.month)
+  var day = Number(req.body.day)
+
+  var datestring = year + '-' + ('0' + (month+1)).slice(-2) + '-' + ('0' + day).slice(-2);
+  var file = datestring + "_log.txt";
+  var baseDir = __dirname + '/../logs';
+
+  fs.exists(baseDir + '/' + file, function(exists) {
+    if (exists) {
+      res.sendFile(file, {root: __dirname + '/../logs'});
+    }
+    else {
+      res.send("No logs exist for " + datestring)
+    }
+  });
+}
+
 /************************************************************************
  Rest API for Database operations.
  ************************************************************************/
