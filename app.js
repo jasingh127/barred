@@ -72,7 +72,8 @@ iTrak_config = {
 ***************************************************************************/
 app.get('/', routes.index);
 app.post('/fetchCustomer', routes.fetchCustomer);
-app.get('/logs', routes.fetchLogs)
+app.get('/logs', routes.logs)
+app.post('/fetchLogs', routes.fetchLogs)
 
 /***************************************************************************
 // Periodic DB Update Function
