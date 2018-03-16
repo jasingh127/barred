@@ -48,8 +48,8 @@ exports.fetchCustomer = function(req, res) {
   
   // Query database
   if (!first_name) {
-    db.all("SELECT * FROM PROFILES WHERE UPPER(REPLACE(last_name, ' ', '')) = UPPER(REPLACE(?, ' ', ''))", 
-        last_name,
+    db.all("SELECT * FROM PROFILES WHERE UPPER(REPLACE(last_name, ' ', '')) LIKE REPLACE(?, ' ', '')",
+        '%'+last_name+'%',
         function (err, rows) {
           if (err) {
             console.log(errr)
@@ -59,8 +59,8 @@ exports.fetchCustomer = function(req, res) {
       );
   }
   else if (!last_name) {
-    db.all("SELECT * FROM PROFILES WHERE UPPER(REPLACE(first_name, ' ', '')) = UPPER(REPLACE(?, ' ', ''))", 
-        first_name,
+    db.all("SELECT * FROM PROFILES WHERE UPPER(REPLACE(first_name, ' ', '')) LIKE REPLACE(?, ' ', '')",
+        '%'+first_name+'%',
         function (err, rows) {
           if (err) {
             console.log(err)
@@ -71,9 +71,9 @@ exports.fetchCustomer = function(req, res) {
   }
   else {
     db.all("SELECT * FROM PROFILES WHERE \
-      UPPER(REPLACE(first_name, ' ', '')) = UPPER(REPLACE(?, ' ', '')) \
-      AND UPPER(REPLACE(last_name, ' ', '')) = UPPER(REPLACE(?, ' ', ''))", 
-      first_name, last_name,
+      UPPER(REPLACE(first_name, ' ', '')) LIKE REPLACE(?, ' ', '') \
+      AND UPPER(REPLACE(last_name, ' ', '')) LIKE REPLACE(?, ' ', '')",
+      '%'+first_name+'%', '%'+last_name+'%',
       function (err, rows) {
         if (err) {
           console.log(err)
