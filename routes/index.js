@@ -45,43 +45,23 @@ exports.fetchCustomer = function(req, res) {
   // console.log(req.body)
   var first_name = req.body.first_name
   var last_name = req.body.last_name
-  
+  var dob = req.body.dob
+
   // Query database
-  if (!first_name) {
-    db.all("SELECT * FROM PROFILES WHERE UPPER(REPLACE(last_name, ' ', '')) LIKE REPLACE(?, ' ', '')",
-        '%'+last_name+'%',
-        function (err, rows) {
-          if (err) {
-            console.log(errr)
-          }
-          res.json({"rows": rows})
-        }
-      );
-  }
-  else if (!last_name) {
-    db.all("SELECT * FROM PROFILES WHERE UPPER(REPLACE(first_name, ' ', '')) LIKE REPLACE(?, ' ', '')",
-        '%'+first_name+'%',
-        function (err, rows) {
-          if (err) {
-            console.log(err)
-          }
-          res.json({"rows": rows})
-        }
-      );
-  }
-  else {
-    db.all("SELECT * FROM PROFILES WHERE \
-      UPPER(REPLACE(first_name, ' ', '')) LIKE REPLACE(?, ' ', '') \
-      AND UPPER(REPLACE(last_name, ' ', '')) LIKE REPLACE(?, ' ', '')",
-      '%'+first_name+'%', '%'+last_name+'%',
-      function (err, rows) {
-        if (err) {
-          console.log(err)
-        }
-        res.json({"rows": rows})
-      }
-    );
-  }
+  if (first_name || last_name || dob) {
+     db.all("SELECT * FROM PROFILES WHERE \
+       UPPER(REPLACE(first_name, ' ', '')) LIKE REPLACE(?, ' ', '') \
+       AND UPPER(REPLACE(last_name, ' ', '')) LIKE REPLACE(?, ' ', '') \
+       AND UPPER(REPLACE(dob, ' ', '')) LIKE REPLACE(?, ' ', '')",
+       '%'+first_name+'%', '%'+last_name+'%', '%'+dob+'%',
+       function (err, rows) {
+         if (err) {
+           console.log(err)
+         }
+         res.json({"rows": rows})
+       }
+     );
+   }
 }
 
 /************************************************************************
@@ -95,19 +75,11 @@ exports.random_int = function getRandomInt(min, max) {
 } 
 
 exports.format_date = function(date) {
-  var d = new Date(date),
-    month = '' + (d.getMonth() + 1),
-    day = '' + (d.getDate() + 1),
-    year = d.getFullYear();
-
-    if (year == 1899) {
-      return 'Unknown'
-    }
-
-  if (month.length < 2) month = '0' + month;
-  if (day.length < 2) day = '0' + day;
-
-  return [year, month, day].join('-');
+  if (!date) {
+    return 'Unknown'
+  }
+  var d = new Date(date)
+  return d.toISOString().substr(0, 10)
 }
 
 exports.insert_rows_into_database = function(rows) {
