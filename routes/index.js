@@ -75,19 +75,11 @@ exports.random_int = function getRandomInt(min, max) {
 } 
 
 exports.format_date = function(date) {
-  var d = new Date(date),
-    month = '' + (d.getMonth() + 1),
-    day = '' + (d.getDate() + 1),
-    year = d.getFullYear();
-
-    if (year == 1899) {
-      return 'Unknown'
-    }
-
-  if (month.length < 2) month = '0' + month;
-  if (day.length < 2) day = '0' + day;
-
-  return [year, month, day].join('-');
+  if (!date) {
+    return 'Unknown'
+  }
+  var d = new Date(date)
+  return d.toISOString().substr(0, 10)
 }
 
 exports.insert_rows_into_database = function(rows) {
